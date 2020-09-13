@@ -1,0 +1,48 @@
+{
+    "name": "amrshawky/laravel-currency",
+    "description": "A Laravel package for currency converting and latest exchange rates based on the free API provided by exchangerate.host",
+    "keywords": [
+        "laravel",
+        "currency",
+        "currency converter",
+        "exchange rates"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Amr Shawky",
+            "homepage": "http://amrshawky.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "guzzlehttp/guzzle": ">=6.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AmrShawky\\Currency\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AmrShawky\\Currency\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AmrShawky\\Currency\\CurrencyServiceProvider"
+            ],
+            "aliases": {
+                "Currency": "AmrShawky\\Currency\\CurrencyFacade"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
