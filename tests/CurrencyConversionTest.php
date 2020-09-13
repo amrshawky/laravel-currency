@@ -102,21 +102,67 @@ class CurrencyConversionTest extends TestCase
             ->from($this->from)
             ->amount(1)
             ->get();
-
     }
 
     /**
      * @test
      */
-    public function it_throws_exceptions_when_amount_is_missing()
+    public function amount_has_default_when_missing()
+    {
+        $this->client = $this->successMock();
+
+        $result = (new CurrencyConversion($this->client))
+            ->from($this->from)
+            ->to($this->to)
+            ->get();
+
+        $this->assertEquals(1.504, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function dynamic_method_call_adds_to_query_param_if_method_is_available()
+    {
+        $this->client = $this->successMock();
+
+        $result = (new CurrencyConversion($this->client))
+            ->from($this->from)
+            ->to($this->to)
+            ->round(1)
+            ->date('2020-09-13')
+            ->get();
+
+        $this->assertEquals(1.504, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function dynamic_method_call_fails_if_method_is_not_available()
     {
         $this->expectException(\Exception::class);
+        $this->client = $this->successMock();
 
+        $result = (new CurrencyConversion($this->client))
+            ->from($this->from)
+            ->to($this->to)
+            ->test(1)
+            ->get();
+    }
+
+    /**
+     * @test
+     */
+    public function dynamic_method_call_fails_if_method_call_has_no_parameters()
+    {
+        $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
         (new CurrencyConversion($this->client))
             ->from($this->from)
             ->to($this->to)
+            ->round()
             ->get();
     }
 }

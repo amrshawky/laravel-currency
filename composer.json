@@ -1,6 +1,6 @@
 {
     "name": "amrshawky/laravel-currency",
-    "description": "A Laravel package for currency converting and latest exchange rates based on the free API provided by exchangerate.host",
+    "description": "A Laravel package for currency conversion and latest exchange rates based on the free API provided by exchangerate.host",
     "keywords": [
         "laravel",
         "currency",

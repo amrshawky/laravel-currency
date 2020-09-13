@@ -3,11 +3,12 @@
 namespace AmrShawky\Currency;
 
 use AmrShawky\Currency\Traits\HttpRequest;
+use AmrShawky\Currency\Traits\ParamsOverload;
 use GuzzleHttp\Client;
 
 class CurrencyConversion
 {
-    use HttpRequest;
+    use HttpRequest, ParamsOverload;
 
     /**
      * @var string
@@ -15,29 +16,39 @@ class CurrencyConversion
     private $base_url  = 'https://api.exchangerate.host/convert';
 
     /**
+     * Required base currency
+     *
      * @var null
      */
     private $from = null;
 
     /**
+     * Required target currency
+     *
      * @var null
      */
     private $to = null;
 
     /**
-     * @var null
+     * @var float
      */
-    private $amount = null;
+    private $amount = 1.00;
 
     /**
-     * @var null
+     * @var array
      */
-    private $round = null;
+    private $params = [];
 
     /**
-     * @var null
+     * @var array
      */
     private $query_params = [];
+
+    private $available_params = [
+        'round',
+        'date',
+        'source'
+    ];
 
     /**
      * @var
@@ -83,19 +94,9 @@ class CurrencyConversion
     }
 
     /**
-     * @param int $places
-     *
-     * @return $this
-     */
-    public function round(int $places)
-    {
-        $this->round = $places;
-        return $this;
-    }
-
-    /**
-     * @return false|mixed
      * @throws \Exception
+     *
+     * @return float|null
      */
     public function get()
     {
@@ -106,11 +107,7 @@ class CurrencyConversion
         if (!$this->to) {
             throw new \Exception('Target currency is not specified!');
         }
-
-        if (!$this->amount) {
-            throw new \Exception('Amount to convert is not specified!');
-        }
-
+        
         $this->buildQueryParams();
 
         $response = $this->request(
@@ -129,8 +126,10 @@ class CurrencyConversion
             'amount'    => $this->amount
         ];
 
-        if ($this->round !== null) {
-            $this->query_params['places'] = $this->round;
+        if (!empty($this->params)) {
+            foreach ($this->params as $key => $param) {
+                $this->query_params[$key] = $param;
+            }
         }
     }
 }
