@@ -114,7 +114,6 @@ class CurrencyConversion
         $this->buildQueryParams();
 
         $response = $this->request(
-            $this->client,
             $this->base_url,
             $this->query_params
         );
@@ -125,13 +124,10 @@ class CurrencyConversion
     private function buildQueryParams()
     {
         $this->query_params = [
-            'from'  => $this->from,
-            'to'    => $this->to
+            'from'      => $this->from,
+            'to'        => $this->to,
+            'amount'    => $this->amount
         ];
-
-        if ($this->amount !== null) {
-            $this->query_params['amount'] = $this->amount;
-        }
 
         if ($this->round !== null) {
             $this->query_params['places'] = $this->round;
