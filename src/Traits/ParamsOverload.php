@@ -5,6 +5,11 @@ namespace AmrShawky\Currency\Traits;
 trait ParamsOverload
 {
     /**
+     * @var
+     */
+    protected $params = [];
+
+    /**
      * @param string $name
      * @param array  $arguments
      *

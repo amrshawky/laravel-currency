@@ -3,40 +3,18 @@
 namespace AmrShawky\Currency\Tests;
 
 use AmrShawky\Currency\CurrencyConversion;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class CurrencyConversionTest extends TestCase
 {
+    use ClientMock;
+
     public $from = 'USD';
 
     public $to   = 'EUR';
-
-    private $client;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    private function mock(array $params)
-    {
-        $mock           = new MockHandler($params);
-        $handlerStack   = HandlerStack::create($mock);
-        return new Client(['handler' => $handlerStack]);
-    }
-
-    private function successMock()
-    {
-        return $this->mock([
-            new Response(200, [], json_encode(['success' => true, 'result' => 1.504]))
-        ]);
-    }
 
     private function convert()
     {
@@ -45,6 +23,13 @@ class CurrencyConversionTest extends TestCase
             ->to($this->to)
             ->amount(1)
             ->get();
+    }
+
+    private function successMock()
+    {
+        return $this->mock([
+            new Response(200, [], json_encode(['success' => true, 'result' => 1.504]))
+        ]);
     }
     
     /**
@@ -144,7 +129,7 @@ class CurrencyConversionTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        $result = (new CurrencyConversion($this->client))
+        (new CurrencyConversion($this->client))
             ->from($this->from)
             ->to($this->to)
             ->test(1)
@@ -162,7 +147,7 @@ class CurrencyConversionTest extends TestCase
         (new CurrencyConversion($this->client))
             ->from($this->from)
             ->to($this->to)
-            ->round()
+            ->date()
             ->get();
     }
 }

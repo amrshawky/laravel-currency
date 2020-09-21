@@ -2,14 +2,21 @@
 
 namespace AmrShawky\Currency;
 
-use GuzzleHttp\Client;
-
 class Currency
 {
+    /**
+     * @return CurrencyConversion
+     */
     public function convert()
     {
-        return new CurrencyConversion(
-            new Client()
-        );
+        return new CurrencyConversion();
+    }
+
+    /**
+     * @return CurrencyRatesProxy
+     */
+    public function rates()
+    {
+        return new CurrencyRatesProxy();
     }
 }

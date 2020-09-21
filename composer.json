@@ -1,6 +1,6 @@
 {
     "name": "amrshawky/laravel-currency",
-    "description": "A Laravel package for currency conversion and latest exchange rates based on the free API provided by exchangerate.host",
+    "description": "A Laravel package for currency conversion, latest and historical exchange rates based on the free API provided by exchangerate.host",
     "keywords": [
         "laravel",
         "currency",
@@ -18,7 +18,8 @@
     "require": {
         "php": "^7.2",
         "guzzlehttp/guzzle": ">=6.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "illuminate/support": "6.*|7.*|8.*"
     },
     "require-dev": {
         "phpunit/phpunit": ">=8.0"

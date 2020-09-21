@@ -2,8 +2,15 @@
 
 namespace AmrShawky\Currency\Traits;
 
+use GuzzleHttp\Client;
+
 trait HttpRequest
 {
+    /**
+     * @var
+     */
+    protected $client;
+
     /**
      * @param string $method
      * @param string $url
@@ -12,7 +19,7 @@ trait HttpRequest
      * @return null|mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request(string $url, array $params = [], string $method = 'GET')
+    protected function request(string $url, array $params = [], string $method = 'GET')
     {
         try {
             $response = $this->client->request($method, $url, [

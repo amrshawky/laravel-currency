@@ -2,18 +2,16 @@
 
 namespace AmrShawky\Currency;
 
-use AmrShawky\Currency\Traits\HttpRequest;
 use AmrShawky\Currency\Traits\ParamsOverload;
 use GuzzleHttp\Client;
 
-class CurrencyConversion
+class CurrencyConversion extends API
 {
-    use HttpRequest, ParamsOverload;
-
+    use ParamsOverload;
     /**
      * @var string
      */
-    private $base_url  = 'https://api.exchangerate.host/convert';
+    protected $base_url  = 'https://api.exchangerate.host/convert';
 
     /**
      * Required base currency
@@ -30,6 +28,11 @@ class CurrencyConversion
     private $to = null;
 
     /**
+     * @var null
+     */
+    private $places = null;
+
+    /**
      * @var float
      */
     private $amount = 1.00;
@@ -37,27 +40,43 @@ class CurrencyConversion
     /**
      * @var array
      */
-    private $params = [];
-
-    /**
-     * @var array
-     */
-    private $query_params = [];
-
-    private $available_params = [
+    protected $available_params = [
         'round',
         'date',
-        'source'
+        'source',
+        'places'
     ];
 
     /**
-     * @var
+     * CurrencyConversion constructor.
+     *
+     * @param Client|null $client
      */
-    private $client;
-
-    public function __construct(Client $client)
+    public function __construct(?Client $client = null)
     {
-        $this->client = $client;
+        $this->client = $client ?? new Client();
+
+        $this->setQueryParams(function () {
+            if (!$this->from) {
+                throw new \Exception('Base currency is not specified!');
+            }
+
+            if (!$this->to) {
+                throw new \Exception('Target currency is not specified!');
+            }
+
+            $params = [
+                'from'   => $this->from,
+                'to'     => $this->to,
+                'amount' => $this->amount
+            ];
+
+            if ($this->places) {
+                $params['places'] = $this->places;
+            }
+
+            return $params;
+        });
     }
 
     /**
@@ -83,6 +102,17 @@ class CurrencyConversion
     }
 
     /**
+     * @param $places
+     *
+     * @return $this
+     */
+    public function round(int $places)
+    {
+        $this->places = $places;
+        return $this;
+    }
+
+    /**
      * @param float $amount
      *
      * @return $this
@@ -94,42 +124,12 @@ class CurrencyConversion
     }
 
     /**
-     * @throws \Exception
+     * @param object $response
      *
-     * @return float|null
+     * @return mixed|null
      */
-    public function get()
+    protected function getResults(object $response)
     {
-        if (!$this->from) {
-            throw new \Exception('Base currency is not specified!');
-        }
-
-        if (!$this->to) {
-            throw new \Exception('Target currency is not specified!');
-        }
-        
-        $this->buildQueryParams();
-
-        $response = $this->request(
-            $this->base_url,
-            $this->query_params
-        );
-
         return $response->result ?? null;
-    }
-
-    private function buildQueryParams()
-    {
-        $this->query_params = [
-            'from'      => $this->from,
-            'to'        => $this->to,
-            'amount'    => $this->amount
-        ];
-
-        if (!empty($this->params)) {
-            foreach ($this->params as $key => $param) {
-                $this->query_params[$key] = $param;
-            }
-        }
     }
 }
