@@ -1,37 +1,116 @@
-## Welcome to GitHub Pages
+# Laravel Currency
+![Tests](https://github.com/amrshawky/laravel-currency/workflows/Tests/badge.svg?branch=master)
 
-You can use the [editor on GitHub](https://github.com/amrshawky/laravel-currency/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Laravel currency is a simple package for currency conversion, latest and historical exchange rates based on the free API [exchangerate.host](https://exchangerate.host "exchangerate.host Homepage") - no API keys needed!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Requirements
+- PHP >= 7.2
+- Laravel >= 6.0
+- guzzlehttp >= 6.0
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+## Installation
+```
+composer require amrshawky/laravel-currency
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Usage
 
-### Jekyll Themes
+### 1. Currency Conversion
+To convert from one currency to another you may chain the methods like so: 
+```php
+Currency::convert()
+        ->from('USD')
+        ->to('EUR')
+        ->get();
+```
+This will return the converted amount or `null` on failure.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/amrshawky/laravel-currency/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+The amount to be converted is default to `1`, you may specify the amount:
 
-### Support or Contact
+```php
+Currency::convert()
+        ->from('USD')
+        ->to('EUR')
+        ->amount(50)
+        ->get();
+```
+#### Available Methods
+- Convert currency using historical exchange rates `YYYY-MM-DD`:
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+```php
+Currency::convert()
+        ->from('USD')
+        ->to('EUR')
+        ->date('2019-08-01')
+        ->get();
+```
+
+- Round the converted amount to decimal places:
+
+```php
+Currency::convert()
+        ->from('USD')
+        ->to('EUR')
+        ->round(2)
+        ->get();
+```
+
+- You may also switch data source between forex `default` or bank view:
+
+```php
+Currency::convert()
+        ->from('USD')
+        ->to('EUR')
+        ->source('ecb')
+        ->get();
+```
+
+### 2. Latest Rates
+To get latest rates you may chain the methods like so: 
+```php
+Currency::rates()
+        ->latest()
+        ->get();
+```
+This will return an `array` of all available currencies or `null` on failure.
+
+#### Available Methods
+- Just like currency conversion you may chain any of the available methods like so:
+```php
+Currency::rates()
+        ->latest()
+        ->symbols(['USD', 'EUR', 'EGP']) //An array of currency codes to limit output currencies
+        ->base('GBP') //Changing base currency. Enter the three-letter currency code of your preferred base currency.
+        ->amount(5.66) //Specify the amount to be converted
+        ->round(2) //Round numbers to decimal places
+        ->source('ecb') //Switch data source between forex `default` or bank view
+        ->get();
+```
+
+### 3. Historical Rates
+Historical rates are available for most currencies all the way back to the year of 1999.
+```php
+Currency::rates()
+        ->historical('2020-01-01') // `YYYY-MM-DD` Required date parameter to get the rates for
+        ->get();
+```
+Same as latest rates you may chain any of the available methods like so: 
+```php
+Currency::rates()
+        ->historical('2020-01-01')
+        ->symbols(['USD', 'EUR', 'EGP'])
+        ->base('GBP')
+        ->amount(5.66)
+        ->round(2)
+        ->source('ecb')
+        ->get();
+```
+More information regarding list of bank sources [here](https://api.exchangerate.host/sources "List of bank sources")
+
+For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols")
+
+## More features
+Coming soon!
+
+## License
+The MIT License (MIT). Please see [LICENSE](../master/LICENSE) for more information.
