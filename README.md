@@ -1,5 +1,5 @@
 # Laravel Currency
-![Tests](https://github.com/amrshawky/laravel-currency/workflows/Tests/badge.svg?branch=master)
+![Tests](https://github.com/amrshawky/laravel-currency/workflows/Tests/badge.svg?branch=master) ![Packagist License](https://img.shields.io/packagist/l/amrshawky/laravel-currency?color=success&label=License) ![Packagist Version](https://img.shields.io/packagist/v/amrshawky/laravel-currency?label=Packagist) ![Packagist Downloads](https://img.shields.io/packagist/dt/amrshawky/laravel-currency?color=success&label=Downloads)
 
 Laravel currency is a simple package for currency conversion, latest and historical exchange rates based on the free API [exchangerate.host](https://exchangerate.host "exchangerate.host Homepage") - no API keys needed!
 
