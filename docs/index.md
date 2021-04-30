@@ -77,6 +77,7 @@ Currency::convert()
 
 ### 2. Latest Rates
 To get latest rates you may chain the methods:
+
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
@@ -84,10 +85,12 @@ Currency::rates()
         ->latest()
         ->get();
 ```
+
 This will return an `array` of all available currencies or `null` on failure.
 
 #### Available Methods
 - Just like currency conversion you may chain any of the available methods:
+
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
@@ -103,6 +106,7 @@ Currency::rates()
 
 ### 3. Historical Rates
 Historical rates are available for most currencies all the way back to the year of 1999.
+
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
@@ -111,6 +115,7 @@ Currency::rates()
         ->get();
 ```
 Same as latest rates you may chain any of the available methods:
+
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
