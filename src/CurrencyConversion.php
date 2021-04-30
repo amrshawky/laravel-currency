@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 class CurrencyConversion extends API
 {
     use ParamsOverload;
+
     /**
      * @var string
      */
@@ -54,7 +55,7 @@ class CurrencyConversion extends API
      */
     public function __construct(?Client $client = null)
     {
-        $this->client = $client ?? new Client();
+        parent::__construct($client);
 
         $this->setQueryParams(function () {
             if (!$this->from) {

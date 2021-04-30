@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class CurrencyHistoricalRatesTest extends TestCase
 {
-    use ClientMock;
+    use ClientMock, Throwable;
 
     public function historicalRates()
     {
@@ -19,6 +19,9 @@ class CurrencyHistoricalRatesTest extends TestCase
             ->base('EUR')
             ->round(2)
             ->amount(30)
+            ->when($this->throw, function (CurrencyHistoricalRates $historicalRates) {
+                return $historicalRates->throw($this->throw_callback ?? null);
+            })
             ->get();
     }
 
@@ -37,7 +40,7 @@ class CurrencyHistoricalRatesTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_null_when_it_fails()
+    public function it_returns_null_when_it_fails_and_throw_is_false()
     {
         $this->client = $this->mock([
             new RequestException('Error Communicating with Server', new Request('GET', 'test')),
@@ -48,6 +51,36 @@ class CurrencyHistoricalRatesTest extends TestCase
         $this->assertNull($this->historicalRates());
         $this->assertNull($this->historicalRates());
         $this->assertNull($this->historicalRates());
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_http_fails_and_throw_is_true()
+    {
+        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+
+        $this->client = $this->mock([
+            new Response(500)
+        ]);
+
+        $this->throw();
+        $this->historicalRates();
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_networking_error_occurs_and_throw_is_true()
+    {
+        $this->expectException(RequestException::class);
+
+        $this->client = $this->mock([
+            new RequestException('Error Communicating with Server', new Request('GET', 'test'))
+        ]);
+
+        $this->throw();
+        $this->historicalRates();
     }
 
     /**

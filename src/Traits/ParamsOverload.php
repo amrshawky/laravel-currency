@@ -18,8 +18,8 @@ trait ParamsOverload
      */
     public function __call(string $name , array $arguments)
     {
-        if (!method_exists(self::class, $name)) {
-            if (property_exists(self::class, 'available_params') && in_array($name, $this->available_params)) {
+        if (!method_exists(get_called_class(), $name)) {
+            if (property_exists(get_called_class(), 'available_params') && in_array($name, $this->available_params)) {
                 if (empty($arguments)) {
                     throw new \Exception("Method require one parameter");
                 }
@@ -27,6 +27,6 @@ trait ParamsOverload
                 return $this;
             }
         }
-        throw new \Exception("Method not found");
+        throw new \Exception("Method {$name}() not found");
     }
 }

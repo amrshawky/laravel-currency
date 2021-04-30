@@ -1,10 +1,10 @@
 <?php
 
-namespace AmrShawky\Currency;
+namespace AmrShawky\Currency\Facade;
 
 use Illuminate\Support\Facades\Facade;
 
-class CurrencyFacade extends Facade
+class Currency extends Facade
 {
     public static function getFacadeAccessor()
     {

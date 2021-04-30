@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class CurrencyConversionTest extends TestCase
 {
-    use ClientMock;
+    use ClientMock, Throwable;
 
     public $from = 'USD';
 
@@ -22,6 +22,9 @@ class CurrencyConversionTest extends TestCase
             ->from($this->from)
             ->to($this->to)
             ->amount(1)
+            ->when($this->throw, function (CurrencyConversion $currencyConversion) {
+                return $currencyConversion->throw($this->throw_callback ?? null);
+            })
             ->get();
     }
 
@@ -35,7 +38,7 @@ class CurrencyConversionTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_null_when_it_fails()
+    public function it_returns_null_when_it_fails_and_throw_is_false()
     {
         $this->client = $this->mock([
             new RequestException('Error Communicating with Server', new Request('GET', 'test')),
@@ -46,6 +49,54 @@ class CurrencyConversionTest extends TestCase
         $this->assertNull($this->convert());
         $this->assertNull($this->convert());
         $this->assertNull($this->convert());
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_http_fails_and_throw_is_true()
+    {
+        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+
+        $this->client = $this->mock([
+            new Response(500)
+        ]);
+
+        $this->throw();
+        $this->convert();
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_networking_error_occurs_and_throw_is_true()
+    {
+        $this->expectException(RequestException::class);
+
+        $this->client = $this->mock([
+            new RequestException('Error Communicating with Server', new Request('GET', 'test'))
+        ]);
+
+        $this->throw();
+        $this->convert();
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_it_fails_and_throw_is_true_with_a_callback()
+    {
+        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+
+        $this->client = $this->mock([
+            new Response(500)
+        ]);
+
+        $this->throw(function ($request, $e) {
+            //
+        });
+
+        $this->convert();
     }
     
     /**
@@ -61,7 +112,7 @@ class CurrencyConversionTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exceptions_when_base_currency_is_missing()
+    public function it_throws_exception_when_base_currency_is_missing()
     {
         $this->expectException(\Exception::class);
 
@@ -77,7 +128,7 @@ class CurrencyConversionTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exceptions_when_target_currency_is_missing()
+    public function it_throws_exception_when_target_currency_is_missing()
     {
         $this->expectException(\Exception::class);
 

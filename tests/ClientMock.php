@@ -14,6 +14,9 @@ trait ClientMock
     {
         $mock           = new MockHandler($params);
         $handlerStack   = HandlerStack::create($mock);
-        return new Client(['handler' => $handlerStack]);
+        return new Client([
+            'handler'     => $handlerStack,
+            'http_errors' => false
+        ]);
     }
 }

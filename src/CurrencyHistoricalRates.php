@@ -1,8 +1,6 @@
 <?php
 
-
 namespace AmrShawky\Currency;
-
 
 use GuzzleHttp\Client;
 

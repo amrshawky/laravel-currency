@@ -4,6 +4,7 @@ namespace AmrShawky\Currency;
 
 use AmrShawky\Currency\Traits\HttpRequest;
 use Closure;
+use GuzzleHttp\Client;
 
 abstract class API
 {
@@ -23,6 +24,16 @@ abstract class API
      * @var array
      */
     protected $query_params_callback = null;
+
+    /**
+     * CurrencyConversion constructor.
+     *
+     * @param Client|null $client
+     */
+    public function __construct(?Client $client = null)
+    {
+        $this->client = $client;
+    }
 
     /**
      * @param Object $response
@@ -50,6 +61,7 @@ abstract class API
 
     /**
      * @return mixed|null
+     * @throws \Exception
      */
     public function get()
     {
@@ -69,5 +81,20 @@ abstract class API
     protected function setQueryParams(Closure $callback)
     {
         $this->query_params_callback = $callback;
+    }
+
+    /**
+     * @param          $condition
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    public function when($condition, callable $callback)
+    {
+        if ($condition) {
+            $callback($this, $condition);
+        }
+
+        return $this;
     }
 }

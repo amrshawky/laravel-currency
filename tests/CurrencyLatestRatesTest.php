@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class CurrencyLatestRatesTest extends TestCase
 {
-    use ClientMock;
+    use ClientMock, Throwable;
 
     private function latestRates()
     {
@@ -18,6 +18,9 @@ class CurrencyLatestRatesTest extends TestCase
             ->symbols(['USD', 'EUR','CZK', 'EGP'])
             ->base('GBP')
             ->round(2)
+            ->when($this->throw, function (CurrencyLatestRates $latestRates) {
+                return $latestRates->throw($this->throw_callback ?? null);
+            })
             ->get();
     }
 
@@ -36,7 +39,7 @@ class CurrencyLatestRatesTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_null_when_it_fails()
+    public function it_returns_null_when_it_fails_and_throw_is_false()
     {
         $this->client = $this->mock([
             new RequestException('Error Communicating with Server', new Request('GET', 'test')),
@@ -47,6 +50,37 @@ class CurrencyLatestRatesTest extends TestCase
         $this->assertNull($this->latestRates());
         $this->assertNull($this->latestRates());
         $this->assertNull($this->latestRates());
+    }
+
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_http_fails_and_throw_is_true()
+    {
+        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+
+        $this->client = $this->mock([
+            new Response(500)
+        ]);
+
+        $this->throw();
+        $this->latestRates();
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_networking_error_occurs_and_throw_is_true()
+    {
+        $this->expectException(RequestException::class);
+
+        $this->client = $this->mock([
+            new RequestException('Error Communicating with Server', new Request('GET', 'test'))
+        ]);
+
+        $this->throw();
+        $this->latestRates();
     }
 
     /**
