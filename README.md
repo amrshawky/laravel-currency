@@ -153,7 +153,7 @@ Currency::convert()
         })
         ->get();
 ```
-###Other Methods
+### Other Methods
 
 - You may use the `withoutVerifying` method to indicate that TLS certificates should not be verified when sending the request:
 
