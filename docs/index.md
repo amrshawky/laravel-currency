@@ -1,7 +1,7 @@
 # Laravel Currency
 ![Tests](https://github.com/amrshawky/laravel-currency/workflows/Tests/badge.svg?branch=master) ![Packagist License](https://img.shields.io/packagist/l/amrshawky/laravel-currency?color=success&label=License) ![Packagist Version](https://img.shields.io/packagist/v/amrshawky/laravel-currency?label=Packagist) ![Packagist Downloads](https://img.shields.io/packagist/dt/amrshawky/laravel-currency?color=success&label=Downloads)
 
-Laravel currency is a simple package for currency conversion, latest and historical exchange rates based on the free API [exchangerate.host](https://exchangerate.host "exchangerate.host Homepage") - no API keys needed!
+Laravel currency is a simple package for current and historical currency exchange rates & crypto exchange rates. based on the free API [exchangerate.host](https://exchangerate.host "exchangerate.host Homepage") - no API keys needed!
 
 ## Requirements
 - PHP >= 7.2
@@ -9,6 +9,7 @@ Laravel currency is a simple package for currency conversion, latest and histori
 - guzzlehttp >= 6.0
 
 ## Installation
+
 ```
 composer require amrshawky/laravel-currency
 ```
@@ -16,7 +17,8 @@ composer require amrshawky/laravel-currency
 ## Usage
 
 ### 1. Currency Conversion
-To convert from one currency to another you may chain the methods like so:
+To convert from one currency to another you may chain the methods:
+
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
@@ -85,7 +87,6 @@ Currency::rates()
         ->latest()
         ->get();
 ```
-
 This will return an `array` of all available currencies or `null` on failure.
 
 #### Available Methods
@@ -100,7 +101,7 @@ Currency::rates()
         ->base('GBP') //Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
         ->amount(5.66) //Specify the amount to be converted
         ->round(2) //Round numbers to decimal places
-        ->source('ecb') //Switch data source between forex `default` or bank view
+        ->source('ecb') //Switch data source between forex `default`, bank view or crypto currencies.
         ->get();
 ```
 
@@ -111,23 +112,39 @@ Historical rates are available for most currencies all the way back to the year 
 use AmrShawky\Currency\Facade\Currency;
 
 Currency::rates()
-        ->historical('2020-01-01') // `YYYY-MM-DD` Required date parameter to get the rates for
+        ->historical('2020-01-01') //`YYYY-MM-DD` Required date parameter to get the rates for
         ->get();
 ```
 Same as latest rates you may chain any of the available methods:
-
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
 Currency::rates()
         ->historical('2020-01-01')
-        ->symbols(['USD', 'EUR', 'EGP'])
+        ->symbols(['USD', 'EUR', 'CZK'])
         ->base('GBP')
         ->amount(5.66)
         ->round(2)
         ->source('ecb')
         ->get();
 ```
+### 4. Timeseries Rates
+Timeseries are for daily historical rates between two dates of your choice, with a maximum time frame of 365 days.
+This will return an `array` with keys as dates and values as an `array` of rates or `null` on failure.
+
+```php
+use AmrShawky\Currency\Facade\Currency;
+
+Currency::rates()
+        ->timeSeries('2021-05-01', '2021-05-04') //`YYYY-MM-DD` Required dates range parameters
+        ->symbols(['USD', 'EUR', 'EGP']) //[optional] An array of currency codes to limit output currencies
+        ->base('GBP') //[optional] Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
+        ->amount(5.66) //[optional] Specify the amount to be converted (default: 1)
+        ->round(2) //[optional] Round numbers to decimal places
+        ->source('ecb') //[optional] Switch data source between forex `default`, bank view or crypto currencies.
+        ->get();
+```
+
 ### Throwing Exceptions
 The default behavior is to return `null` for errors that occur during the request _(connection timeout, DNS errors, client or server error status code, missing API success parameter, etc.)_.
 
@@ -207,9 +224,6 @@ Currency::rates()
 More information regarding list of bank sources [here](https://api.exchangerate.host/sources "List of bank sources")
 
 For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols")
-
-## More features
-Coming soon!
 
 ## License
 The MIT License (MIT). Please see [LICENSE](../master/LICENSE) for more information.
