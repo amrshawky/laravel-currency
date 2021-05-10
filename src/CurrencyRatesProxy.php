@@ -32,4 +32,15 @@ class CurrencyRatesProxy
     {
         return new CurrencyTimeSeriesRates($date_from, $date_to);
     }
+
+    /**
+     * @param string $date_from
+     * @param string $date_to
+     *
+     * @return CurrencyFluctuations
+     */
+    public function fluctuations(string $date_from, string $date_to)
+    {
+        return new CurrencyFluctuations($date_from, $date_to);
+    }
 }

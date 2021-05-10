@@ -65,15 +65,15 @@ Currency::convert()
         ->get();
 ```
 
-- You may also switch data source between forex `default` or bank view:
+- You may also switch data source between forex `default`, bank view or crypto currencies:
 
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
 Currency::convert()
-        ->from('USD')
-        ->to('EUR')
-        ->source('ecb')
+        ->from('BTC')
+        ->to('ETH')
+        ->source('crypto')
         ->get();
 ```
 
@@ -86,6 +86,15 @@ use AmrShawky\Currency\Facade\Currency;
 Currency::rates()
         ->latest()
         ->get();
+
+// ['USD' =>  1.215707, ...]
+
+Currency::rates()
+        ->latest()
+        ->source('crypto')
+        ->get();
+
+// ['ETH' => 3398.61, ...]
 ```
 This will return an `array` of all available currencies or `null` on failure.
 
@@ -114,6 +123,15 @@ use AmrShawky\Currency\Facade\Currency;
 Currency::rates()
         ->historical('2020-01-01') //`YYYY-MM-DD` Required date parameter to get the rates for
         ->get();
+
+// ['USD' =>  1.1185, ...]
+
+Currency::rates()
+        ->historical('2021-03-30')
+        ->source('crypto')
+        ->get();
+        
+// ['BTC' =>  2.0E-5, ...]
 ```
 Same as latest rates you may chain any of the available methods: 
 ```php
@@ -130,19 +148,58 @@ Currency::rates()
 ```
 ### 4. Timeseries Rates
 Timeseries are for daily historical rates between two dates of your choice, with a maximum time frame of 365 days.
-This will return an `array` with keys as dates and values as an `array` of rates or `null` on failure.
+This will return an `array` or `null` on failure.
 
 ```php
 use AmrShawky\Currency\Facade\Currency;
 
 Currency::rates()
-        ->timeSeries('2021-05-01', '2021-05-04') //`YYYY-MM-DD` Required dates range parameters
-        ->symbols(['USD', 'EUR', 'EGP']) //[optional] An array of currency codes to limit output currencies
+        ->timeSeries('2021-05-01', '2021-05-02') //`YYYY-MM-DD` Required dates range parameters
+        ->symbols(['USD']) //[optional] An array of currency codes to limit output currencies
         ->base('GBP') //[optional] Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
         ->amount(5.66) //[optional] Specify the amount to be converted (default: 1)
         ->round(2) //[optional] Round numbers to decimal places
         ->source('ecb') //[optional] Switch data source between forex `default`, bank view or crypto currencies.
         ->get();
+        
+/**
+[
+    '2021-05-01' => [
+        "USD" => 1.201995
+    ],
+    '2021-05-02' => [
+        "USD" => 1.2027
+    ]
+]
+ */
+```
+
+### 5. Fluctuations
+Retrieve information about how currencies fluctuate on a day-to-day basis, with a maximum time frame of 365 days.
+This will return an `array` or `null` on failure.
+
+```php
+use AmrShawky\Currency\Facade\Currency;
+
+Currency::rates()
+        ->fluctuations('2021-03-29', '2021-04-15') //`YYYY-MM-DD` Required dates range parameters
+        ->symbols(['USD']) //[optional] An array of currency codes to limit output currencies
+        ->base('GBP') //[optional] Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
+        ->amount(5.66) //[optional] Specify the amount to be converted (default: 1)
+        ->round(2) //[optional] Round numbers to decimal places
+        ->source('ecb') //[optional] Switch data source between forex `default`, bank view or crypto currencies.
+        ->get();
+        
+/**
+ [
+    'USD' => [
+        "start_rate" => 1.376454, 
+        "end_rate"   => 1.37816, 
+        "change"     => -0.001706, 
+        "change_pct" => -0.001239
+        ]
+ ]
+ */
 ```
 
 ### Throwing Exceptions
@@ -221,9 +278,25 @@ Currency::rates()
         ->get();
 ```
 
+### Testing
+Currency uses Laravel facades which makes it easy to [mock](https://laravel.com/docs/8.x/mocking#mocking-facades "Mocking Laravel Facades") so it's not actually executed during the test:
+
+```php
+use AmrShawky\Currency\Facade\Currency;
+
+Currency::shouldReceive('convert')
+        ->once()
+        ->andReturn(1.50);
+
+
+Currency::shouldReceive('rates')
+         ->once()
+         ->andReturn(['EUR' => 1,'USD' => 1.215707]);
+```
+
 More information regarding list of bank sources [here](https://api.exchangerate.host/sources "List of bank sources")
 
-For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols")
+For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols") and list of crypto currencies [here](https://api.exchangerate.host/cryptocurrencies)
 
 ## License
 The MIT License (MIT). Please see [LICENSE](../master/LICENSE) for more information.
