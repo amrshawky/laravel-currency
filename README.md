@@ -3,6 +3,8 @@
 
 Laravel currency is a simple package for current and historical currency exchange rates & crypto exchange rates. based on the free API [exchangerate.host](https://exchangerate.host "exchangerate.host Homepage") - no API keys needed!
 
+> Note: This package is an integration for the [Currency](https://github.com/amrshawky/currency) library
+
 ## Requirements
 - PHP >= 7.2
 - Laravel >= 6.0
