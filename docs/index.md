@@ -20,7 +20,7 @@ composer require amrshawky/laravel-currency
 To convert from one currency to another you may chain the methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -32,7 +32,7 @@ This will return the converted amount or `null` on failure.
 The amount to be converted is default to `1`, you may specify the amount:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -44,7 +44,7 @@ Currency::convert()
 - Convert currency using historical exchange rates `YYYY-MM-DD`:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -56,7 +56,7 @@ Currency::convert()
 - Round the converted amount to decimal places:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -65,15 +65,15 @@ Currency::convert()
         ->get();
 ```
 
-- You may also switch data source between forex `default` or bank view:
+- You may also switch data source between forex `default`, bank view or crypto currencies:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
-        ->from('USD')
-        ->to('EUR')
-        ->source('ecb')
+        ->from('BTC')
+        ->to('ETH')
+        ->source('crypto')
         ->get();
 ```
 
@@ -81,11 +81,20 @@ Currency::convert()
 To get latest rates you may chain the methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
         ->get();
+
+// ['USD' =>  1.215707, ...]
+
+Currency::rates()
+        ->latest()
+        ->source('crypto')
+        ->get();
+
+// ['ETH' => 3398.61, ...]
 ```
 This will return an `array` of all available currencies or `null` on failure.
 
@@ -93,7 +102,7 @@ This will return an `array` of all available currencies or `null` on failure.
 - Just like currency conversion you may chain any of the available methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
@@ -109,15 +118,24 @@ Currency::rates()
 Historical rates are available for most currencies all the way back to the year of 1999.
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2020-01-01') //`YYYY-MM-DD` Required date parameter to get the rates for
         ->get();
+
+// ['USD' =>  1.1185, ...]
+
+Currency::rates()
+        ->historical('2021-03-30')
+        ->source('crypto')
+        ->get();
+        
+// ['BTC' =>  2.0E-5, ...]
 ```
 Same as latest rates you may chain any of the available methods:
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2020-01-01')
@@ -130,19 +148,58 @@ Currency::rates()
 ```
 ### 4. Timeseries Rates
 Timeseries are for daily historical rates between two dates of your choice, with a maximum time frame of 365 days.
-This will return an `array` with keys as dates and values as an `array` of rates or `null` on failure.
+This will return an `array` or `null` on failure.
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
-        ->timeSeries('2021-05-01', '2021-05-04') //`YYYY-MM-DD` Required dates range parameters
-        ->symbols(['USD', 'EUR', 'EGP']) //[optional] An array of currency codes to limit output currencies
+        ->timeSeries('2021-05-01', '2021-05-02') //`YYYY-MM-DD` Required dates range parameters
+        ->symbols(['USD']) //[optional] An array of currency codes to limit output currencies
         ->base('GBP') //[optional] Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
         ->amount(5.66) //[optional] Specify the amount to be converted (default: 1)
         ->round(2) //[optional] Round numbers to decimal places
         ->source('ecb') //[optional] Switch data source between forex `default`, bank view or crypto currencies.
         ->get();
+        
+/**
+[
+    '2021-05-01' => [
+        "USD" => 1.201995
+    ],
+    '2021-05-02' => [
+        "USD" => 1.2027
+    ]
+]
+ */
+```
+
+### 5. Fluctuations
+Retrieve information about how currencies fluctuate on a day-to-day basis, with a maximum time frame of 365 days.
+This will return an `array` or `null` on failure.
+
+```php
+use AmrShawky\LaravelCurrency\Facade\Currency;
+
+Currency::rates()
+        ->fluctuations('2021-03-29', '2021-04-15') //`YYYY-MM-DD` Required dates range parameters
+        ->symbols(['USD']) //[optional] An array of currency codes to limit output currencies
+        ->base('GBP') //[optional] Changing base currency (default: EUR). Enter the three-letter currency code of your preferred base currency.
+        ->amount(5.66) //[optional] Specify the amount to be converted (default: 1)
+        ->round(2) //[optional] Round numbers to decimal places
+        ->source('ecb') //[optional] Switch data source between forex `default`, bank view or crypto currencies.
+        ->get();
+        
+/**
+ [
+    'USD' => [
+        "start_rate" => 1.376454, 
+        "end_rate"   => 1.37816, 
+        "change"     => -0.001706, 
+        "change_pct" => -0.001239
+        ]
+ ]
+ */
 ```
 
 ### Throwing Exceptions
@@ -151,7 +208,7 @@ The default behavior is to return `null` for errors that occur during the reques
 If you would like to throw an exception instead, you may use the `throw` method, The `throw` method returns the currency instance, allowing you to chain other methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -164,7 +221,7 @@ Currency::convert()
 If you would like to perform some additional logic before the exception is thrown, you may pass a closure to the throw method:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -180,7 +237,7 @@ Currency::convert()
 - You may use the `withoutVerifying` method to indicate that TLS certificates should not be verified when sending the request:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -192,7 +249,7 @@ Currency::convert()
 - You may specify additional [Guzzle request options](https://docs.guzzlephp.org/en/stable/request-options.html "Guzzle request options") using the `withOptions` method. The `withOptions` method accepts an array of key / value pairs:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2021-04-30')
@@ -205,7 +262,7 @@ Currency::rates()
 
 - The `when` method will execute the given callback when the first argument given to the method evaluates to true:
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
@@ -221,9 +278,25 @@ Currency::rates()
         ->get();
 ```
 
+### Testing
+Currency uses Laravel facades which makes it easy to [mock](https://laravel.com/docs/8.x/mocking#mocking-facades "Mocking Laravel Facades") so it's not actually executed during the test:
+
+```php
+use AmrShawky\LaravelCurrency\Facade\Currency;
+
+Currency::shouldReceive('convert')
+        ->once()
+        ->andReturn(1.50);
+
+
+Currency::shouldReceive('rates')
+         ->once()
+         ->andReturn(['EUR' => 1,'USD' => 1.215707]);
+```
+
 More information regarding list of bank sources [here](https://api.exchangerate.host/sources "List of bank sources")
 
-For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols")
+For a list of all supported symbols [here](https://api.exchangerate.host/symbols "List of supported symbols") and list of crypto currencies [here](https://api.exchangerate.host/cryptocurrencies)
 
 ## License
 The MIT License (MIT). Please see [LICENSE](../master/LICENSE) for more information.

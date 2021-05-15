@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyLatestRates;
+use AmrShawky\CurrencyFactory;
+use AmrShawky\CurrencyLatestRates;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -14,7 +15,9 @@ class CurrencyLatestRatesTest extends TestCase
 
     private function latestRates()
     {
-        return (new CurrencyLatestRates($this->client))
+        return (new CurrencyFactory())
+            ->rates()
+            ->latest($this->client)
             ->symbols(['USD', 'EUR','CZK', 'EGP'])
             ->base('GBP')
             ->round(2)
@@ -58,7 +61,7 @@ class CurrencyLatestRatesTest extends TestCase
      */
     public function it_throws_exception_when_http_fails_and_throw_is_true()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -113,7 +116,9 @@ class CurrencyLatestRatesTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyLatestRates($this->client))
+        (new CurrencyFactory())
+            ->rates()
+            ->latest($this->client)
             ->test(1)
             ->get();
     }
@@ -126,7 +131,9 @@ class CurrencyLatestRatesTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyLatestRates($this->client))
+        (new CurrencyFactory())
+            ->rates()
+            ->latest($this->client)
             ->base()
             ->round()
             ->get();

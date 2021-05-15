@@ -1,6 +1,6 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
 trait Throwable
 {

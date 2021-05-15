@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyConversion;
+use AmrShawky\CurrencyConversion;
+use AmrShawky\CurrencyFactory;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -18,7 +19,8 @@ class CurrencyConversionTest extends TestCase
 
     private function convert()
     {
-        return (new CurrencyConversion($this->client))
+        return (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->to($this->to)
             ->amount(1)
@@ -56,7 +58,7 @@ class CurrencyConversionTest extends TestCase
      */
     public function it_throws_exception_when_http_fails_and_throw_is_true()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -86,7 +88,7 @@ class CurrencyConversionTest extends TestCase
      */
     public function it_throws_exception_it_fails_and_throw_is_true_with_a_callback()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -118,7 +120,8 @@ class CurrencyConversionTest extends TestCase
 
         $this->client = $this->successMock();
 
-        (new CurrencyConversion($this->client))
+        (new CurrencyFactory())
+            ->convert($this->client)
             ->to($this->to)
             ->amount(1)
             ->get();
@@ -134,7 +137,8 @@ class CurrencyConversionTest extends TestCase
 
         $this->client = $this->successMock();
 
-        (new CurrencyConversion($this->client))
+        (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->amount(1)
             ->get();
@@ -147,10 +151,11 @@ class CurrencyConversionTest extends TestCase
     {
         $this->client = $this->successMock();
 
-        $result = (new CurrencyConversion($this->client))
-            ->from($this->from)
-            ->to($this->to)
-            ->get();
+        $result = (new CurrencyFactory())
+                    ->convert($this->client)
+                    ->from($this->from)
+                    ->to($this->to)
+                    ->get();
 
         $this->assertEquals(1.504, $result);
     }
@@ -162,7 +167,8 @@ class CurrencyConversionTest extends TestCase
     {
         $this->client = $this->successMock();
 
-        $result = (new CurrencyConversion($this->client))
+        $result = (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->to($this->to)
             ->round(1)
@@ -180,7 +186,8 @@ class CurrencyConversionTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyConversion($this->client))
+        (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->to($this->to)
             ->test(1)
@@ -195,7 +202,8 @@ class CurrencyConversionTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyConversion($this->client))
+        (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->to($this->to)
             ->date()

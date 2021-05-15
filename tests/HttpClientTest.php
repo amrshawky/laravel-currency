@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyConversion;
+use AmrShawky\CurrencyConversion;
+use AmrShawky\CurrencyFactory;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +17,8 @@ class HttpClientTest extends TestCase
 
     private function convert(?callable $callback = null)
     {
-        $currency =  (new CurrencyConversion($this->client))
+        $currency =  (new CurrencyFactory())
+            ->convert($this->client)
             ->from($this->from)
             ->to($this->to)
             ->amount(1)

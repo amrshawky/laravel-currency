@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyTimeSeriesRates;
+use AmrShawky\CurrencyFactory;
+use AmrShawky\CurrencyTimeSeriesRates;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -14,7 +15,9 @@ class CurrencyTimeSeriesRatesTest extends TestCase
 
     protected function timeSeriesRates()
     {
-        return (new CurrencyTimeSeriesRates('2021-08-10', '2021-08-10', $this->client))
+        return (new CurrencyFactory())
+            ->rates()
+            ->timeSeries('2021-08-10', '2021-08-10', $this->client)
             ->symbols(['USD','CZK', 'EGP', 'GBP'])
             ->amount(30)
             ->when($this->throw, function (CurrencyTimeSeriesRates $timeSeriesRates) {
@@ -61,7 +64,7 @@ class CurrencyTimeSeriesRatesTest extends TestCase
      */
     public function it_throws_exception_when_http_fails_and_throw_is_true()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -117,7 +120,9 @@ class CurrencyTimeSeriesRatesTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyTimeSeriesRates('2021-05-04', '2021-05-06', $this->client))
+        (new CurrencyFactory())
+            ->rates()
+            ->timeSeries('2021-05-04', '2021-05-06', $this->client)
             ->shouldFail()
             ->get();
     }

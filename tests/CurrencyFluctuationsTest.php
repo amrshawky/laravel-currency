@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyFluctuations;
+use AmrShawky\CurrencyFactory;
+use AmrShawky\CurrencyFluctuations;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -14,7 +15,9 @@ class CurrencyFluctuationsTest extends TestCase
 
     protected function fluctuations()
     {
-        return (new CurrencyFluctuations('2021-08-10', '2021-08-10', $this->client))
+        return (new CurrencyFactory())
+            ->rates()
+            ->fluctuations('2021-08-10', '2021-08-10', $this->client)
             ->symbols(['USD','CZK', 'EGP', 'GBP'])
             ->amount(30)
             ->when($this->throw, function (CurrencyFluctuations $currencyFluctuations) {
@@ -61,7 +64,7 @@ class CurrencyFluctuationsTest extends TestCase
      */
     public function it_throws_exception_when_http_fails_and_throw_is_true()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -116,7 +119,9 @@ class CurrencyFluctuationsTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyFluctuations('2021-05-04', '2021-05-06', $this->client))
+        (new CurrencyFactory())
+            ->rates()
+            ->fluctuations('2021-05-04', '2021-05-06', $this->client)
             ->shouldFail()
             ->get();
     }

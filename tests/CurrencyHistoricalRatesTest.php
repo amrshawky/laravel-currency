@@ -1,8 +1,9 @@
 <?php
 
-namespace AmrShawky\Currency\Tests;
+namespace AmrShawky\LaravelCurrency\Tests;
 
-use AmrShawky\Currency\CurrencyHistoricalRates;
+use AmrShawky\CurrencyFactory;
+use AmrShawky\CurrencyHistoricalRates;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -14,7 +15,9 @@ class CurrencyHistoricalRatesTest extends TestCase
 
     public function historicalRates()
     {
-        return (new CurrencyHistoricalRates('2020-08-10', $this->client))
+        return (new CurrencyFactory())
+            ->rates()
+            ->historical('2020-08-10', $this->client)
             ->symbols(['USD','CZK', 'EGP', 'GBP'])
             ->base('EUR')
             ->round(2)
@@ -58,7 +61,7 @@ class CurrencyHistoricalRatesTest extends TestCase
      */
     public function it_throws_exception_when_http_fails_and_throw_is_true()
     {
-        $this->expectException(\AmrShawky\Currency\Exceptions\RequestException::class);
+        $this->expectException(\AmrShawky\Exceptions\RequestException::class);
 
         $this->client = $this->mock([
             new Response(500)
@@ -103,7 +106,9 @@ class CurrencyHistoricalRatesTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyHistoricalRates('2020-02-05', $this->client))
+        (new CurrencyFactory())
+            ->rates()
+            ->historical('2020-02-05', $this->client)
             ->test(1)
             ->get();
     }
@@ -116,9 +121,11 @@ class CurrencyHistoricalRatesTest extends TestCase
         $this->expectException(\Exception::class);
         $this->client = $this->successMock();
 
-        (new CurrencyHistoricalRates('2020-01-01', $this->client))
-            ->base()
-            ->round()
-            ->get();
+        (new CurrencyFactory())
+            ->rates()
+             ->historical('2020-01-01', $this->client)
+             ->base()
+             ->round()
+             ->get();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace AmrShawky\Currency\Facade;
+namespace AmrShawky\LaravelCurrency\Facade;
 
 use Illuminate\Support\Facades\Facade;
 

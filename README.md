@@ -20,7 +20,7 @@ composer require amrshawky/laravel-currency
 To convert from one currency to another you may chain the methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -32,7 +32,7 @@ This will return the converted amount or `null` on failure.
 The amount to be converted is default to `1`, you may specify the amount:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -44,7 +44,7 @@ Currency::convert()
 - Convert currency using historical exchange rates `YYYY-MM-DD`:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -56,7 +56,7 @@ Currency::convert()
 - Round the converted amount to decimal places:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -68,7 +68,7 @@ Currency::convert()
 - You may also switch data source between forex `default`, bank view or crypto currencies:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('BTC')
@@ -81,7 +81,7 @@ Currency::convert()
 To get latest rates you may chain the methods: 
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
@@ -102,7 +102,7 @@ This will return an `array` of all available currencies or `null` on failure.
 - Just like currency conversion you may chain any of the available methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
@@ -118,7 +118,7 @@ Currency::rates()
 Historical rates are available for most currencies all the way back to the year of 1999.
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2020-01-01') //`YYYY-MM-DD` Required date parameter to get the rates for
@@ -135,7 +135,7 @@ Currency::rates()
 ```
 Same as latest rates you may chain any of the available methods: 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2020-01-01')
@@ -151,7 +151,7 @@ Timeseries are for daily historical rates between two dates of your choice, with
 This will return an `array` or `null` on failure.
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->timeSeries('2021-05-01', '2021-05-02') //`YYYY-MM-DD` Required dates range parameters
@@ -179,7 +179,7 @@ Retrieve information about how currencies fluctuate on a day-to-day basis, with 
 This will return an `array` or `null` on failure.
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->fluctuations('2021-03-29', '2021-04-15') //`YYYY-MM-DD` Required dates range parameters
@@ -208,7 +208,7 @@ The default behavior is to return `null` for errors that occur during the reques
 If you would like to throw an exception instead, you may use the `throw` method, The `throw` method returns the currency instance, allowing you to chain other methods:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -221,7 +221,7 @@ Currency::convert()
 If you would like to perform some additional logic before the exception is thrown, you may pass a closure to the throw method:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -237,7 +237,7 @@ Currency::convert()
 - You may use the `withoutVerifying` method to indicate that TLS certificates should not be verified when sending the request:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::convert()
         ->from('USD')
@@ -249,7 +249,7 @@ Currency::convert()
 - You may specify additional [Guzzle request options](https://docs.guzzlephp.org/en/stable/request-options.html "Guzzle request options") using the `withOptions` method. The `withOptions` method accepts an array of key / value pairs:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->historical('2021-04-30')
@@ -262,7 +262,7 @@ Currency::rates()
 
 - The `when` method will execute the given callback when the first argument given to the method evaluates to true:
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::rates()
         ->latest()
@@ -282,7 +282,7 @@ Currency::rates()
 Currency uses Laravel facades which makes it easy to [mock](https://laravel.com/docs/8.x/mocking#mocking-facades "Mocking Laravel Facades") so it's not actually executed during the test:
 
 ```php
-use AmrShawky\Currency\Facade\Currency;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 Currency::shouldReceive('convert')
         ->once()
