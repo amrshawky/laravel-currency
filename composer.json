@@ -19,7 +19,7 @@
         "php": ">=7.2",
         "guzzlehttp/guzzle": ">=6.0",
         "ext-json": "*",
-        "illuminate/support": "^6.0|^7.0|^8.0",
+        "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
         "amrshawky/currency": "^1.0"
     },
     "require-dev": {
